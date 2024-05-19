@@ -38,8 +38,6 @@ int main() {
   visited.resize(2 * N);
   component.resize(2 * N, -1);
 
-  // ... (previous code)
-
   for (int i = 0; i < M; ++i) {
     int x, y, c;
     cin >> x >> y >> c;
