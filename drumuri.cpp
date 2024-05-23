@@ -8,6 +8,8 @@ struct Edge {
   long long weight;
 };
 
+// functie care calculeaza distantele minime de la un nod de start la toate
+// celelalte noduri din graf(dijkstra)
 void dijkstra(vector<vector<Edge>> &graph, long long start,
               vector<long long> &dist) {
   priority_queue<pair<long long, long long>, vector<pair<long long, long long>>,
@@ -21,10 +23,7 @@ void dijkstra(vector<vector<Edge>> &graph, long long start,
     long long d = pq.top().first;
     pq.pop();
 
-    if (d > dist[u])
-      continue;
-
-    for (const auto &edge : graph[u]) {
+    for (Edge &edge : graph[u]) {
       long long v = edge.to;
       long long w = edge.weight;
 
@@ -44,34 +43,33 @@ int main() {
   f >> N >> M;
 
   vector<vector<Edge>> graph(N + 1);
+  vector<vector<Edge>> reversedGraph(N + 1);
   for (long long i = 0; i < M; ++i) {
-    long long u, v, w;
-    f >> u >> v >> w;
-    graph[u].push_back({v, w});
+    long long x, y, z;
+    f >> x >> y >> z;
+    graph[x].push_back({y, z});
+    reversedGraph[y].push_back({x, z});
   }
 
   f >> x >> y >> z;
 
   vector<long long> distX(N + 1, INF), distY(N + 1, INF), distZ(N + 1, INF);
-  vector<vector<Edge>> reversedGraph(N + 1);
 
-  for (long long u = 1; u <= N; ++u) {
-    for (const auto &edge : graph[u]) {
-      reversedGraph[edge.to].push_back({u, edge.weight});
-    }
-  }
 
+  // calculez distantele minime de la nodurile x, y la toate celelalte
   dijkstra(graph, x, distX);
   dijkstra(graph, y, distY);
+
+  // calculez distantele minime de la nodul z la toate celelalte
   dijkstra(reversedGraph, z, distZ);
 
   long long minCost = INF;
-  for (long long u = 1; u <= N; ++u) {
-    if (distX[u] != INF && distY[u] != INF && distZ[u] != INF) {
-      if (distX[u] > INF - distY[u] || distX[u] + distY[u] > INF - distZ[u]) {
-        continue;
-      }
-      minCost = min(minCost, distX[u] + distY[u] + distZ[u]);
+  // caut drumul minim
+  for (long long i = 1; i <= N; ++i) {
+    // daca exista drum de la x la i, de la y la i si de la i la z
+    // atunci actualizez costul minim
+    if (distX[i] != INF && distY[i] != INF && distZ[i] != INF) {
+      minCost = min(minCost, distX[i] + distY[i] + distZ[i]);
     }
   }
 

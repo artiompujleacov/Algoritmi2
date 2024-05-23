@@ -6,10 +6,15 @@
 
 using namespace std;
 
+/* ca sursa de inspiratie mi-a servit:
+"https://www.geeksforgeeks.org/2-satisfiability-2-sat-problem/" */
+
 vector<vector<int>> adj, adj_rev;
 vector<bool> visited;
 vector<int> order, component;
 
+
+// dfs1 pentru Kosaraju
 void dfs1(int v) {
   visited[v] = true;
   for (int u : adj[v]) {
@@ -19,6 +24,8 @@ void dfs1(int v) {
   order.push_back(v);
 }
 
+
+// dfs2 pentru Kosaraju
 void dfs2(int v, int c) {
   component[v] = c;
   for (int u : adj_rev[v]) {
@@ -44,6 +51,7 @@ int main() {
     --x;
     --y;
 
+    // in dependenta de caz, adaug muchiile in graf intr-un fel anumit
     switch (c) {
     case 0:
       adj[x + N].push_back(y);
@@ -71,26 +79,23 @@ int main() {
       break;
     }
   }
+
+  // pasul 1 din Kosaraju
   for (int i = 0; i < 2 * N; ++i) {
     if (!visited[i])
       dfs1(i);
   }
 
   int c = 0;
+  // pasul 2 din Kosaraju
   for (int i = 0; i < 2 * N; ++i) {
     int v = order[2 * N - 1 - i];
     if (component[v] == -1)
       dfs2(v, c++);
   }
 
-  for (int i = 0; i < N; ++i) {
-    if (component[i] == component[i + N]) {
-      cout << "IMPOSSIBLE\n";
-      return 0;
-    }
-  }
-
   vector<int> result;
+  // verific daca e satisfiabil
   for (int i = 0; i < N; ++i) {
     if (component[i] > component[i + N]) {
       result.push_back(i + 1);

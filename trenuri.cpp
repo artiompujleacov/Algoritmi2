@@ -7,17 +7,25 @@
 
 using namespace std;
 
+
 int longest_path(map<string, vector<string>> &graph, string node,
                  map<string, int> &longest_paths) {
+  // daca am calculat deja lungimea celui mai lung drum care incepe din nodul
+  // curent, returnez acea valoare
   if (longest_paths.count(node)) {
     return longest_paths.at(node);
   }
   int max_path_length = 0;
-  for (auto it = graph[node].begin(); it != graph[node].end(); ++it) {
+  // iterez prin vecinii nodului curent si calculez lungimea celui mai lung
+  // drum care incepe dintr-unul din vecinii nodului curent
+  for (vector<string>::iterator it = graph[node].begin();
+       it != graph[node].end(); ++it) {
     int path_length = longest_path(graph, *it, longest_paths);
     max_path_length = max(max_path_length, path_length + 1);
   }
+
   longest_paths[node] = max_path_length;
+
   return max_path_length;
 }
 
